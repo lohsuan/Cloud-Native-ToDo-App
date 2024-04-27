@@ -1,5 +1,14 @@
 # Testing Lab
 
+## HW1-1: Add Dockerfile and docker-compose
+
+How to test:
+
+```shell
+# in hw(root) directory
+$ docker-compose up -d
+```
+
 ## Backend
 
 Fastify Server
