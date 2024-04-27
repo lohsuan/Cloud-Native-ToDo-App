@@ -1,0 +1,36 @@
+services:
+
+  todo-db:
+    image: mongo:4.4
+    container_name: todo-db
+    environment:
+      - MONGO_INITDB_DATABASE=mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - todo-data:/var/lib/mongo
+
+  todo-app:
+    build:
+      context: ./backend
+    container_name: todo-app
+    ports:
+      - 8888:8888
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8888
+      MONGO_CONNECTION_STRING: mongodb://todo-db:27017/mongo
+    links:
+      - todo-db
+
+  todo-ui:
+    build:
+      context: ./frontend
+    container_name: todo-ui
+    ports:
+      - 3000:3000
+    links:
+      - todo-app
+  
+volumes:
+  todo-data: 
