@@ -9,6 +9,10 @@ How to test:
 $ docker-compose up -d
 ```
 
+## HW1-2: Add Deployment, Service, Ingress config
+
+![external-ip-todo-demo.png](external-ip-todo-demo.png)
+
 ## Backend
 
 Fastify Server
