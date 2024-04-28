@@ -9,6 +9,8 @@ How to test:
 $ docker-compose up -d
 ```
 
+![docker-compose-demo](docker-compose-demo.png)
+
 ## HW1-2: Add Deployment, Service, Ingress config
 
 ![external-ip-todo-demo.png](external-ip-todo-demo.png)
