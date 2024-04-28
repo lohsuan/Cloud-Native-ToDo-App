@@ -31,4 +31,8 @@ spec:
               value: "8888"
             - name: MONGO_CONNECTION_STRING
               value: "mongodb://todo-db-clusterip:27017/mongo"
-          
+          livenessProbe:
+            tcpSocket:
+              port: 8888
+            initialDelaySeconds: 15
+            periodSeconds: 20
