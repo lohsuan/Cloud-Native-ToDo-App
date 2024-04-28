@@ -23,6 +23,12 @@ spec:
           volumeMounts:
             - name: mongodb-persistent-storage
               mountPath: /var/lib/mongo
+          livenessProbe:
+            tcpSocket:
+              port: 27017
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
       volumes:
         - name: mongodb-persistent-storage
           persistentVolumeClaim:
