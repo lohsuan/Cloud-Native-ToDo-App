@@ -12,4 +12,4 @@ spec:
               service:
                 name: todo-ui-clusterip 
                 port:
-                  number: 3000
+                  number: 5173

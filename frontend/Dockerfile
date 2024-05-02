@@ -22,5 +22,5 @@ RUN npm run build
 
 # COPY --from=BUILDER /app/dist ./dist
 
-EXPOSE 3000
+EXPOSE 5173
 CMD npm run preview

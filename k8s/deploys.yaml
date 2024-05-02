@@ -64,7 +64,7 @@ spec:
     spec:
       containers:
         - name: todo-app-container
-          image: lohsuan/todo-app:latest
+          image: ghcr.io/lohsuan/todo-app:latest
           ports:
             - containerPort: 8888
           resources:
@@ -105,9 +105,9 @@ spec:
     spec:
       containers:
         - name: todo-ui-container
-          image: lohsuan/todo-ui:latest
+          image: ghcr.io/lohsuan/todo-ui:latest
           ports:
-            - containerPort: 3000
+            - containerPort: 5173
           resources:
             requests:
               cpu: 10m
@@ -117,6 +117,6 @@ spec:
               memory: 200Mi
           livenessProbe:
             tcpSocket:
-              port: 3000
+              port: 5173
             initialDelaySeconds: 15
             periodSeconds: 20
