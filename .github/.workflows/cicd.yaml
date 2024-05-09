@@ -1,0 +1,56 @@
+# github action to run ci/cd pipeline on push
+name: Push
+
+on:
+  push:
+    branches:
+      - main
+      - feature*
+  workflow_dispatch:
+
+jobs:
+  build-test-deploy-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js 21
+        uses: actions/setup-node@v2
+        with:
+          node-version: '21'
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd backend
+          npm run test
+        # job fail if coverage rate less than 60%
+        
+            
+      - name: Build and push Docker image
+        run: |
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} --password-stdin          
+          docker build -t ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:latest .
+          docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:latest
+
+
+  deploy-k8s:
+    runs-on: ubuntu-latest
+
+      - name: Deploy to Kubernetes
+        uses: azure/k8s-deploy@v1
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+          manifests: |
+            k8s/services.yaml
+            k8s/deploys.yaml
+          images: |
+            ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:latest
+            ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:latest
+          skip-tls-verify: true
+    needs: build-test-deploy-docker

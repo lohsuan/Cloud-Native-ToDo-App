@@ -1,0 +1,50 @@
+name: Format
+
+on:
+  push:
+    branches:
+      - main
+      - feature*
+  workflow_dispatch:
+
+  # Auto run formatter and create new commit for formatting.
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js 21
+        uses: actions/setup-node@v2
+        with:
+          node-version: '21'
+
+      - name: Install formatter
+        run: |
+          npm install -g prettier
+          npm install -g eslint
+          npm install -g stylelint
+          npm install -g markdownlint-cli
+
+      - name: Format files
+        run: |
+          cd backend
+          prettier --write .
+          eslint --fix .
+          stylelint --fix .
+          markdownlint .
+          cd ../frontend
+          prettier --write .
+          eslint --fix .
+          stylelint --fix .
+          markdownlint .
+          
+
+      - name: Commit changes
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add .
+          git commit -m "Format code"
+          git push
