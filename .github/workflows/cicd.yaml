@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up Node.js 21
         uses: actions/setup-node@v2
@@ -40,12 +40,22 @@ jobs:
 
 
   deploy-k8s:
+    needs: build-test-deploy-docker
     runs-on: ubuntu-latest
+    
+    steps:
+      - name: Set the Kubernetes context
+        uses: azure/k8s-set-context@v2
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Checkout source code
+        uses: actions/checkout@v3
 
       - name: Deploy to Kubernetes
-        uses: azure/k8s-deploy@v1
+        uses: Azure/k8s-deploy@v5
         with:
-          kubeconfig: ${{ secrets.KUBE_CONFIG }}
           manifests: |
             k8s/services.yaml
             k8s/deploys.yaml
@@ -53,4 +63,4 @@ jobs:
             ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:latest
             ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:latest
           skip-tls-verify: true
-    needs: build-test-deploy-docker
+    
