@@ -26,7 +26,7 @@ jobs:
 
       - name: Format files
         run: |
-          prettier --write backend/src/**/*.{ts,tsx}
+          prettier --write backend/src/**/*.{ts}
           prettier --write frontend/src/**/*.{ts,tsx}
         
       - name: Check for modified files
