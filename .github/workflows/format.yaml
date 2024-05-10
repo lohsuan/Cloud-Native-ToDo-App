@@ -22,29 +22,22 @@ jobs:
 
       - name: Install formatter
         run: |
-          npm install -g prettier
-          npm install -g eslint
-          npm install -g stylelint
-          npm install -g markdownlint-cli
+          npm install prettier
 
       - name: Format files
         run: |
-          cd backend
-          prettier --write .
-          eslint --fix .
-          stylelint --fix .
-          markdownlint .
-          cd ../frontend
-          prettier --write .
-          eslint --fix .
-          stylelint --fix .
-          markdownlint .
-          
+          npm prettier --write backend/src/**/*.{ts,tsx}
+          npm prettier --write frontend/src/**/*.{ts,tsx}
+        
+      - name: Check for modified files
+        id: git-check
+        run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
 
-      - name: Commit changes
+      - name: Push changes
+        if: steps.git-check.outputs.modified == 'true'
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git add .
-          git commit -m "Format code"
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git commit -am "Automated changes by formatter action"
           git push
