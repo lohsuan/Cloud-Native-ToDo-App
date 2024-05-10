@@ -45,10 +45,10 @@ jobs:
       - name: Build and push Docker image
         run: |
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-          docker build -t ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:latest ./frontend
-          docker build -t ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:latest ./backend
-          docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:latest
-          docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:latest
+          docker build -t ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.run_id }} ./frontend
+          docker build -t ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.run_id }} ./backend
+          docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.run_id }}
+          docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.run_id }}
 
   deploy-k8s:
     needs: build-test-deploy-docker
@@ -72,14 +72,14 @@ jobs:
             k8s/services.yaml
             k8s/deploys.yaml
           images: |
-            ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.sha }}
-            ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.sha }}
+            ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.run_id }}
+            ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.run_id }}
           skip-tls-verify: true
     
-      - name: update the deployment
-        run: |
-          kubectl set image deployment/todo-app-deploy todo-app-container=ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.sha }}
-          kubectl set image deployment/todo-ui-deploy todo-ui-container=ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.sha }}
+      # - name: update the deployment
+      #   run: |
+      #     kubectl set image deployment/todo-app-deploy todo-app-container=ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.run_id }}
+      #     kubectl set image deployment/todo-ui-deploy todo-ui-container=ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.run_id }}
 
     # Check k8s deployment status and return status
       - name: Check deployment status
