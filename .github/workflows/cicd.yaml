@@ -72,10 +72,15 @@ jobs:
             k8s/services.yaml
             k8s/deploys.yaml
           images: |
-            ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:latest
-            ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:latest
+            ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.sha }}
+            ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.sha }}
           skip-tls-verify: true
     
+      - name: update the deployment
+        run: |
+          kubectl set image deployment/todo-app-deploy todo-app-container=ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.sha }}
+          kubectl set image deployment/todo-ui-deploy todo-ui-container=ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.sha }}
+
     # Check k8s deployment status and return status
       - name: Check deployment status
         run: |
