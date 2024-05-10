@@ -76,3 +76,11 @@ jobs:
             ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:latest
           skip-tls-verify: true
     
+    # Check k8s deployment status and return status
+      - name: Check deployment status
+        run: |
+          kubectl rollout status deployment/todo-app-deploy
+          kubectl rollout status deployment/todo-ui-deploy 
+
+
+
