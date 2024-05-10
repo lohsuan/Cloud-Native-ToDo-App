@@ -38,7 +38,7 @@ jobs:
       - name: Run tests
         run: |
           cd frontend
-          npm run test
+          npm run cy:test
         # job fail if coverage rate less than 60% 
 
       - name: Build and push Docker image

@@ -22,12 +22,12 @@ jobs:
 
       - name: Install formatter
         run: |
-          npm install prettier
+          npm install -g prettier
 
       - name: Format files
         run: |
-          npm prettier --write backend/src/**/*.{ts,tsx}
-          npm prettier --write frontend/src/**/*.{ts,tsx}
+          prettier --write backend/src/**/*.{ts,tsx}
+          prettier --write frontend/src/**/*.{ts,tsx}
         
       - name: Check for modified files
         id: git-check
