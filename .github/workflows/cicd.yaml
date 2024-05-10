@@ -55,18 +55,19 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - uses: actions/checkout@v3
+
       - uses: azure/setup-kubectl@v4
 
       - uses: Azure/k8s-set-context@v4
         with:
           kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
-      - name: Checkout source code
-        uses: actions/checkout@v3
 
       - name: Deploy to Kubernetes
         uses: Azure/k8s-deploy@v5
         with:
+          action: deploy
           manifests: |
             k8s/services.yaml
             k8s/deploys.yaml
