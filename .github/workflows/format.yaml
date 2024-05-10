@@ -34,20 +34,20 @@ jobs:
         id: git-check
         run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
 
-      # - name: Push changes
-      #   if: steps.git-check.outputs.modified == 'true'
-      #   run: |
-      #     git config --global user.name 'github-actions[bot]'
-      #     git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-      #     git remote set-url origin https://x-access-token:${{ secrets.HW_REPO_TOKEN }}@github.com/${{ github.repository }}
-      #     git commit -am "Automated changes by formatter action"
-      #     git push
-      - name: Run the Action
+      - name: Push changes
         if: steps.git-check.outputs.modified == 'true'
-        uses: devops-infra/action-commit-push@master
-        with:
-          github_token: "${{ secrets.GITHUB_TOKEN }}"
-          add_timestamp: true
-          commit_prefix: "[AUTO]"
-          commit_message: "Automatic commit by formatter action"
-          force: false
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git commit -am "Automated changes by formatter action"
+          git push
+      # - name: Run the Action
+      #   if: steps.git-check.outputs.modified == 'true'
+      #   uses: devops-infra/action-commit-push@master
+      #   with:
+      #     github_token: "${{ secrets.GITHUB_TOKEN }}"
+      #     add_timestamp: true
+      #     commit_prefix: "[AUTO]"
+      #     commit_message: "Automatic commit by formatter action"
+      #     force: false
