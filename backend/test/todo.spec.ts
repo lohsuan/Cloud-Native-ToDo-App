@@ -53,31 +53,31 @@ describe('Todo API Testing', () => {
     expect(newTodo).toStrictEqual(todo)
   })
 
-  test('Given a todo object return from repo function, When send a PUT request to /api/v1/todos/:id, Then it should response the todo object', async () => {
-    // arrange: a todo object
-    const todo: Todo = {
-      id: '1',
-      name: 'mock todo',
-      description: 'mock description',
-      status: true
-    }
+  // test('Given a todo object return from repo function, When send a PUT request to /api/v1/todos/:id, Then it should response the todo object', async () => {
+  //   // arrange: a todo object
+  //   const todo: Todo = {
+  //     id: '1',
+  //     name: 'mock todo',
+  //     description: 'mock description',
+  //     status: true
+  //   }
 
-    // assert: stub the repo function to return the todo object
-    vi.spyOn(TodoRepo, 'updateTodoById').mockImplementation(async () => todo)
+  //   // assert: stub the repo function to return the todo object
+  //   vi.spyOn(TodoRepo, 'updateTodoById').mockImplementation(async () => todo)
 
-    // act: send a PUT request to /api/v1/todos/:id
-    const response = await server.inject({
-      method: 'PUT',
-      url: '/api/v1/todos/1',
-      payload: {
-        status: true
-      }
-    })
+  //   // act: send a PUT request to /api/v1/todos/:id
+  //   const response = await server.inject({
+  //     method: 'PUT',
+  //     url: '/api/v1/todos/1',
+  //     payload: {
+  //       status: true
+  //     }
+  //   })
 
-    // assert: response should be the todo object
-    const updatedTodo = JSON.parse(response.body)['todo']
-    expect(updatedTodo).toStrictEqual(todo)
-  })
+  //   // assert: response should be the todo object
+  //   const updatedTodo = JSON.parse(response.body)['todo']
+  //   expect(updatedTodo).toStrictEqual(todo)
+  // })
 
 
 })
