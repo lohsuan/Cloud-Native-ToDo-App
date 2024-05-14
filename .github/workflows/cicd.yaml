@@ -69,54 +69,52 @@ jobs:
       #     npm run cy:test
         # job fail if coverage rate less than 60% 
 
-      - name: Build and push Docker image
-        run: |
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+  #     - name: Build and push Docker image
+  #       run: |
+  #         echo ${{ secrets.DOCKER_PASSWORD }} | docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
-          docker build -t ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.run_id }} ./frontend
-          docker tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.run_id }} ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:latest
+  #         docker build -t ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.run_id }} ./frontend
+  #         docker tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.run_id }} ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:latest
 
-          docker build -t ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.run_id }} ./backend
-          docker tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.run_id }} ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:latest
+  #         docker build -t ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.run_id }} ./backend
+  #         docker tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.run_id }} ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:latest
           
-          docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.run_id }}
-          docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:latest
+  #         docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.run_id }}
+  #         docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:latest
           
-          docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.run_id }}
-          docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:latest
+  #         docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.run_id }}
+  #         docker push ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:latest
 
-  deploy-k8s:
-    needs: build-test-deploy-docker
-    runs-on: ubuntu-latest
+  # deploy-k8s:
+  #   needs: build-test-deploy-docker
+  #   runs-on: ubuntu-latest
     
-    steps:
-      - uses: actions/checkout@v4
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - uses: azure/setup-kubectl@v4
+  #     - uses: azure/setup-kubectl@v4
 
-      - uses: Azure/k8s-set-context@v4
-        with:
-          kubeconfig: ${{ secrets.KUBE_CONFIG }}
-
-
-      - name: Deploy to Kubernetes
-        uses: Azure/k8s-deploy@v5
-        with:
-          action: deploy
-          manifests: |
-            k8s/services.yaml
-            k8s/deploys.yaml
-          images: |
-            ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.run_id }}
-            ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.run_id }}
-          skip-tls-verify: true
-
-    # Check k8s deployment status and return status
-      - name: Check deployment status
-        run: |
-          kubectl rollout status deployment/todo-app-deploy
-          kubectl rollout status deployment/todo-ui-deploy
-          kubectl get deployments -o wide
+  #     - uses: Azure/k8s-set-context@v4
+  #       with:
+  #         kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
 
+  #     - name: Deploy to Kubernetes
+  #       uses: Azure/k8s-deploy@v5
+  #       with:
+  #         action: deploy
+  #         manifests: |
+  #           k8s/services.yaml
+  #           k8s/deploys.yaml
+  #         images: |
+  #           ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-app:${{ github.run_id }}
+  #           ghcr.io/${{ secrets.DOCKER_USERNAME }}/todo-ui:${{ github.run_id }}
+  #         skip-tls-verify: true
+
+  #   # Check k8s deployment status and return status
+  #     - name: Check deployment status
+  #       run: |
+  #         kubectl rollout status deployment/todo-app-deploy
+  #         kubectl rollout status deployment/todo-ui-deploy
+  #         kubectl get deployments -o wide
 
