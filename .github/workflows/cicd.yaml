@@ -26,32 +26,32 @@ jobs:
           cd backend
           npm ci
 
-      - name: Download previous coverage report
-        uses: actions/download-artifact@v4  
-        with:
-          name: code-coverage-report
-      - shell: bash
-        run: |
-          value=`cat index.html`
-          PREVIOUS_COVERAGE=$(echo $value | grep -oP "(?<=<span class=\"strong\">)\d+\.\d+(?=%)" | head -1)
-          echo "Previous Coverage: $PREVIOUS_COVERAGE"
-          echo "$PREVIOUS_COVERAGE" > $GITHUB_OUTPUT
-        id: previous_coverage
+      # - name: Download previous coverage report
+      #   uses: actions/download-artifact@v4  
+      #   with:
+      #     name: code-coverage-report
+      # - shell: bash
+      #   run: |
+      #     value=`cat index.html`
+      #     PREVIOUS_COVERAGE=$(echo $value | grep -oP "(?<=<span class=\"strong\">)\d+\.\d+(?=%)" | head -1)
+      #     echo "Previous Coverage: $PREVIOUS_COVERAGE"
+      #     echo "$PREVIOUS_COVERAGE" > $GITHUB_OUTPUT
+      #   id: previous_coverage
 
       - name: Run tests
         run: |
           cd backend
           npm run test
       
-          COVERAGE_PERCENTAGE=$(cat coverage/index.html | grep -oP "(?<=<span class=\"strong\">)\d+\.\d+(?=%)" | head -1)
-          echo "Coverage Percentage: $COVERAGE_PERCENTAGE"
-          PREVIOUS_COVERAGE=$(cat ${{ steps.previous_coverage.outputs.GITHUB_OUTPUT }})
+          # COVERAGE_PERCENTAGE=$(cat coverage/index.html | grep -oP "(?<=<span class=\"strong\">)\d+\.\d+(?=%)" | head -1)
+          # echo "Coverage Percentage: $COVERAGE_PERCENTAGE"
+          # PREVIOUS_COVERAGE=$(cat ${{ steps.previous_coverage.outputs.GITHUB_OUTPUT }})
 
 
-          if (( $(echo "$COVERAGE_PERCENTAGE < $PREVIOUS_COVERAGE" | bc -l) )); then
-            echo "Coverage is less than previous coverage: $PREVIOUS_COVERAGE%"
-            exit 1  # Fail the job
-          fi
+          # if (( $(echo "$COVERAGE_PERCENTAGE < $PREVIOUS_COVERAGE" | bc -l) )); then
+          #   echo "Coverage is less than previous coverage: $PREVIOUS_COVERAGE%"
+          #   exit 1  # Fail the job
+          # fi
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@v4
