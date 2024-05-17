@@ -78,6 +78,4 @@ describe('Todo API Testing', () => {
     const updatedTodo = JSON.parse(response.body)['todo']
     expect(updatedTodo).toStrictEqual(todo)
   })
-
-
 })
