@@ -53,7 +53,12 @@ jobs:
           fi
           echo "$COVERAGE_PERCENTAGE" > last_coverage.txt
 
+      - name: Check for modified files
+        id: git-check
+        run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
+
       - name: commit and push last_coverage.txt
+        if: steps.git-check.outputs.modified == 'true'
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -63,6 +68,7 @@ jobs:
   
 
       - name: Archive code coverage results
+        # if: steps.git-check.outputs.modified == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report
