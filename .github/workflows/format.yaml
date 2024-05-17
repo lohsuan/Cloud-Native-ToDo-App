@@ -8,7 +8,7 @@ on:
   pull_request:
     branches:
       - main
-      - feat*
+      - feat**
   workflow_dispatch:
 
   # Auto run formatter and create new commit for formatting.
