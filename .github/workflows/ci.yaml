@@ -93,10 +93,9 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-          git pull
           git commit -am "Automated changes by formatter action"
 
       - name: Push changes
         if: steps.format-check.outputs.modified == 'true' || steps.coverage-check.outputs.modified == 'true'
         run: |
-          git push
+          git push origin HEAD: ${{ github.ref_name }}
