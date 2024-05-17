@@ -2,10 +2,10 @@
 name: build-test-deploy
 
 on:
-  push:
-    branches:
-      - main
-      - feat**
+  # push:
+    # branches:
+    #   - main
+    #   - feat**
   pull_request:
   workflow_dispatch:
 
@@ -36,6 +36,7 @@ jobs:
       #   run: ls -R
 
       - name: Run tests and check coverage difference
+        id: git-check
         run: |
           cd backend
           npm run test
@@ -51,11 +52,16 @@ jobs:
             echo "Coverage is less than previous coverage: $PREVIOUS_COVERAGE%"
             exit 1  # Fail the job
           fi
-          echo "$COVERAGE_PERCENTAGE" > last_coverage.txt
 
-      - name: Check for modified files
-        id: git-check
-        run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
+          if (( $(echo "$COVERAGE_PERCENTAGE == $PREVIOUS_COVERAGE" | bc -l) )); 
+          then
+            echo "Coverage is same: $PREVIOUS_COVERAGE%"
+            echo "modified=false" >> $GITHUB_OUTPUT
+          else
+            ech "modified=true" >> $GITHUB_OUTPUT
+          fi
+
+          echo "$COVERAGE_PERCENTAGE" > last_coverage.txt
 
       - name: commit and push last_coverage.txt
         if: steps.git-check.outputs.modified == 'true'
