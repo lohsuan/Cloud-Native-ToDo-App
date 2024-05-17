@@ -1,5 +1,5 @@
 # github action to run ci/cd pipeline on push
-name: build-test-deploy
+name: test-coverage-and-format
 
 on:
   # push:
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  test-coverage:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,18 +25,8 @@ jobs:
           cd backend
           npm ci
 
-      # - name: Download previous coverage report
-      #   uses: actions/download-artifact@v4 
-      #   with:
-      #     name: code-coverage-report
-      #     github-token: ${{ secrets.GITHUB_TOKEN }} 
-
-
-      # - name: Display structure of downloaded files 
-      #   run: ls -R
-
       - name: Run tests and check coverage difference
-        id: git-check
+        id: coverage-check
         run: |
           cd backend
           npm run test
@@ -64,7 +54,7 @@ jobs:
           echo "$COVERAGE_PERCENTAGE" > last_coverage.txt
 
       - name: commit and push last_coverage.txt
-        if: steps.git-check.outputs.modified == 'true'
+        if: steps.coverage-check.outputs.modified == 'true'
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -74,17 +64,47 @@ jobs:
   
 
       - name: Archive code coverage results
-        # if: steps.git-check.outputs.modified == 'true'
+        # if: steps.coverage-check.outputs.modified == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report
           path: backend/coverage/index.html
       
-      # - name: Install dependencies
-      #   run: |
-      #     cd frontend
-      #     npm ci
-      # - name: Run tests
-      #   run: |
-      #     cd frontend
-      #     npm run cy:test
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install formatter
+        run: |
+          npm install -g prettier
+
+      - name: Format files
+        run: |
+          prettier --write backend/src/**/*.ts
+          prettier --write frontend/src/**/*.{ts,tsx}
+          prettier --write frontend/src/*.tsx
+        
+      - name: Check for modified files
+        id: git-check
+        run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
+
+      - name: Push changes
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git commit -am "Automated changes by formatter action"
+          git push
