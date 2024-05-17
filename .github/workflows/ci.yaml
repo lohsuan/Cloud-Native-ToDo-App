@@ -41,7 +41,7 @@ jobs:
 
           if (( $(echo "$COVERAGE_PERCENTAGE == $PREVIOUS_COVERAGE" | bc -l) )); 
           then
-            echo "Coverage is same: $PREVIOUS_COVERAGE%"
+            echo "Coverage is same: $PREVIOUS_COVERAGE"
             echo "modified=false" >> $GITHUB_OUTPUT
           else
             echo "$COVERAGE_PERCENTAGE" > last_coverage.txt
@@ -83,8 +83,8 @@ jobs:
       - name: Check for modified files
         id: format-check
         run: |
-        echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
-        echo $GITHUB_OUTPUT
+          echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
+          echo $GITHUB_OUTPUT
 
       - name: Commit and push changes
         if: steps.format-check.outputs.modified == 'true' || steps.coverage-check.outputs.modified == 'true'
