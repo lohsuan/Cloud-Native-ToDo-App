@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-coverage:
+  test-coverage-and-format:
     runs-on: ubuntu-latest
 
     steps:
@@ -77,6 +77,7 @@ jobs:
       - name: Format files
         run: |
           prettier --write backend/src/**/*.ts
+          prettier --write backend/test/**/*.ts
           prettier --write frontend/src/**/*.{ts,tsx}
           prettier --write frontend/src/*.tsx
         
