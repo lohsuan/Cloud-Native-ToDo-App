@@ -3,10 +3,6 @@ name: test-coverage-and-format
 
 on:
   push:
-    branches:
-      - main
-      - feat**
-  # pull_request:
   workflow_dispatch:
 
 jobs:
