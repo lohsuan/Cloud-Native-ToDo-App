@@ -7,7 +7,6 @@ on:
       - main
       - feat**
   pull_request:
-
   workflow_dispatch:
 
 jobs:
@@ -36,23 +35,17 @@ jobs:
       # - name: Display structure of downloaded files 
       #   run: ls -R
 
-      - shell: bash
-        run: |
-          cd backend
-          value=`cat last_coverage.txt`
-          PREVIOUS_COVERAGE=$(echo $value)
-          echo "Previous Coverage: $PREVIOUS_COVERAGE"
-          echo "$PREVIOUS_COVERAGE" > $GITHUB_OUTPUT
-        id: previous_coverage
-
-      - name: Run tests
+      - name: Run tests and check coverage difference
         run: |
           cd backend
           npm run test
       
           COVERAGE_PERCENTAGE=$(cat coverage/index.html | grep -oP "(?<=<span class=\"strong\">)\d+\.\d+(?=%)" | head -1)
           echo "Coverage Percentage: $COVERAGE_PERCENTAGE"
-          PREVIOUS_COVERAGE=$(cat ${{ steps.previous_coverage.outputs.GITHUB_OUTPUT }})
+
+          value=`cat last_coverage.txt`
+          PREVIOUS_COVERAGE=$(echo $value)
+          echo "Previous Coverage: $PREVIOUS_COVERAGE"
 
           if (( $(echo "$COVERAGE_PERCENTAGE < $PREVIOUS_COVERAGE" | bc -l) )); then
             echo "Coverage is less than previous coverage: $PREVIOUS_COVERAGE%"

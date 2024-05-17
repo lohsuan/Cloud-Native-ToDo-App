@@ -6,9 +6,7 @@ on:
   #     - main
   #     - feat*
   pull_request:
-    branches:
-      - main
-      - feat**
+    types: [opened, synchronize, edited, reopened]
   workflow_dispatch:
 
   # Auto run formatter and create new commit for formatting.
