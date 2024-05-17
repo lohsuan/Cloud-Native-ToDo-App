@@ -94,4 +94,4 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git commit -am "Automated changes by github action"  
-          git push origin HEAD:${{ github.ref_name }}
+          git push 
