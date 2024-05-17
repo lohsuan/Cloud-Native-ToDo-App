@@ -2,13 +2,11 @@
 name: build-test-deploy
 
 on:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
+  #     - feat*
   pull_request:
-    branches:
-      - main
-      - feature*
 
   workflow_dispatch:
 

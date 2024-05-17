@@ -1,10 +1,14 @@
 name: format-files
 
 on:
-  push:
+  # push:
+  #   branches:
+  #     - main
+  #     - feat*
+  pull_request:
     branches:
       - main
-      - feature*
+      - feat*
   workflow_dispatch:
 
   # Auto run formatter and create new commit for formatting.
